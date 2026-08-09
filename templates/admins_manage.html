@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Administradores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container px-4">
+            <span class="navbar-brand fw-bold text-info"><i class="bi bi-people-fill me-2"></i> Gestión de Administradores</span>
+            <a href="/admin" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Volver al Panel</a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 800px;">
+        {% if mensaje %}
+        <div class="alert alert-success">{{ mensaje }}</div>
+        {% endif %}
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <div class="card border-0 shadow-sm p-4 mb-4 rounded-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-person-plus-fill text-primary"></i> Crear Nuevo Administrador</h5>
+            <form method="POST" class="row g-3">
+                <input type="hidden" name="accion" value="crear">
+                <div class="col-md-5">
+                    <input type="text" name="usuario" class="form-control" placeholder="Nombre de usuario" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Crear</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4 rounded-4">
+            <h5 class="fw-bold mb-3">Administradores Activos</h5>
+            <ul class="list-group list-group-flush">
+                {% for a in admins %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ a.usuario }}</strong>
+                    </div>
+                    {% if a.usuario != session['admin_user'] %}
+                    <form method="POST" onsubmit="return confirm('¿Eliminar admin?');">
+                        <input type="hidden" name="accion" value="eliminar">
+                        <input type="hidden" name="admin_id" value="{{ a.id }}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</button>
+                    </form>
+                    {% else %}
+                    <span class="badge bg-success">En uso</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
