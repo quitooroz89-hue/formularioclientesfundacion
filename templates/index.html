@@ -571,8 +571,13 @@
                         </h2>
 
                         <p>
-                            Tus datos han sido enviados y registrados
-                            correctamente. Nos pondremos en contacto contigo pronto.
+                            <p>
+                                Tus datos han sido enviados y registrados correctamente.
+                                Hemos enviado un correo electrónico de confirmación a la
+                                dirección que proporcionaste. Nuestro equipo revisará tu
+                                expediente y se pondrá en contacto contigo cuando haya una
+                                actualización sobre tu solicitud.
+                            </p>
                         </p>
 
                         <a
@@ -669,8 +674,14 @@
                             class="fundacion-form-input"
                             name="correo"
                             placeholder="Correo electrónico"
+                            autocomplete="email"
+                            inputmode="email"
                             required
                         >
+                        <small class="fundacion-form-help">
+                             Utilizaremos este correo para enviarte la confirmación
+                            de tu inscripción y mantenerte informado sobre tu solicitud.
+                        </small>
 
                     </div>
 
