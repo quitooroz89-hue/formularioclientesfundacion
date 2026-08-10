@@ -105,31 +105,89 @@ def get_admin_from_ref():
     ).first()
 
 
-def enviar_email(destinatario: str, asunto: str, cuerpo: str) -> None:
-    """Envía un correo sin romper la petición si el SMTP falla."""
-    remitente = os.environ.get("MAIL_USER")
-    password = os.environ.get("MAIL_PASS")
-
-    if not remitente or not password or not destinatario:
-        return
-
+def enviar_correo_notificacion(cliente, admin_asignado):
+    """Envía un correo automático al administrador asignado."""
     try:
+        # Aquí estamos usando las variables de entorno que configuraremos en Render
+        remitente = os.environ.get("EMAIL_USER")
+        password_correo = os.environ.get("EMAIL_PASS")
+        
+        # Verificación simple para evitar errores si no están configuradas
+        if not remitente or not password_correo:
+            print("Error: EMAIL_USER o EMAIL_PASS no están configurados.")
+            return
+        
+        destinatarios = []
+        if admin_asignado and admin_asignado.correo:
+            destinatarios.append(admin_asignado.correo)
+        else:
+            admins = Admin.query.all()
+            destinatarios = [a.correo for a in admins if a.correo]
+        
+        if not destinatarios:
+            return
+
+        msg = MIMEMultipart()
+        msg['From'] = remitente
+        msg['To'] = ", ".join(destinatarios)
+        msg['Subject'] = f"Nuevo registro: {cliente.nombre} {cliente.apellido} ({cliente.tipo_formulario.upper()})"
+
+        cuerpo = f"""
+Se ha registrado un nuevo cliente en el sistema:
+
+- Formulario: {cliente.tipo_formulario.upper()}
+- Nombre: {cliente.nombre} {cliente.apellido}
+- Correo: {cliente.correo}
+- Teléfono: {cliente.telefono or 'N/A'}
+- Ciudad / País: {cliente.ciudad or ''}, {cliente.pais or 'N/A'}
+- Método de Pago: {cliente.metodo_pago or 'N/A'}
+- Administrador Asignado: @{admin_asignado.usuario if admin_asignado else 'Ninguno'}
+
+Ingresa al panel ejecutivo para ver todos los detalles.
+        """
+        msg.attach(MIMEText(cuerpo, 'plain'))
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(remitente, password_correo)
+        server.sendmail(remitente, destinatarios, msg.as_string())
+        server.quit()
+    except Exception as e:
+        print(f"Error al enviar el correo de notificación: {e}")
+
+
+def enviar_email(destinatario, asunto: str, cuerpo: str) -> None:
+    """Envía un correo simple usando SMTP con Gmail y variables de entorno."""
+    try:
+        remitente = os.environ.get("EMAIL_USER")
+        password_correo = os.environ.get("EMAIL_PASS")
+
+        if not remitente or not password_correo:
+            print("Error: EMAIL_USER o EMAIL_PASS no están configurados.")
+            return
+
+        if isinstance(destinatario, (list, tuple, set)):
+            destinatarios = [d for d in destinatario if d]
+        elif destinatario:
+            destinatarios = [destinatario]
+        else:
+            destinatarios = []
+
+        if not destinatarios:
+            return
+
         msg = MIMEMultipart()
         msg["From"] = remitente
-        msg["To"] = destinatario
+        msg["To"] = ", ".join(destinatarios)
         msg["Subject"] = asunto
         msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 
-        with smtplib.SMTP("smtp.gmail.com", 587, timeout=15) as server:
-            server.ehlo()
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
-            server.ehlo()
-            server.login(remitente, password)
-            server.sendmail(remitente, destinatario, msg.as_string())
-
-    except (smtplib.SMTPException, OSError) as exc:
-        # El registro debe continuar aunque el correo no pueda enviarse.
-        app.logger.warning("No se pudo enviar correo: %s", exc)
+            server.login(remitente, password_correo)
+            server.sendmail(remitente, destinatarios, msg.as_string())
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
 
 
 def enviar_correo_bienvenida(
@@ -534,6 +592,8 @@ def manejar_formulario(tipo_form: str, template_name: str):
                 correo_ingresado,
                 tipo_form,
             )
+
+            
 
         # -----------------------------------------------------
         # Éxito
